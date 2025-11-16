@@ -1,0 +1,2 @@
+class DictionaryLoader:
+    """Dictionary Loader"""
