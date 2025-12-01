@@ -7,7 +7,7 @@ name = "text-tuner"
 version = "1.0.0"
 description = "Инструмент адаптации текста под целевой стиль с лингвистическим анализом"
 authors = [
-    {name = "Azimkova Anna", email = "adazimkova@edu.hse.ru"},
+    {name = "Linguist Student", email = "adazimkova@edu.hse.ru"},
 ]
 readme = "README.md"
 license = {text = "MIT"}
@@ -26,24 +26,30 @@ classifiers = [
 ]
 dependencies = [
     "pymorphy3==2.0.6",
+    "pymorphy3-dicts-ru>=0.99.0",
     "numpy>=1.24.3",
-    "pandas==2.0.3",
-    "pathlib==1.0.1"
+    "pathlib==1.0.1",
+    "pandas==2.0.3"
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=6.0",
     "pytest-cov",
-    "black",
-    "isort",
-    "flake8",
-    "mypy",
+    "black==24.8.0",
+    "isort==5.13.2",
+    "flake8>=6.0",
+    "flake8-docstrings>=1.7.0",
+    "flake8-bugbear>=23.0",
+    "mypy>=1.0",
+    "pre-commit>=3.0",
+    "types-pyyaml>=6.0",
 ]
 
 [project.urls]
 Homepage = "https://github.com/puglyann/TextTuner"
 Repository = "https://github.com/puglyann/TextTuner"
+"Issue Tracker" = "https://github.com/puglyann/TextTuner/issues"
 
 [project.scripts]
 text-tuner = "text_tuner.cli:main"
@@ -73,12 +79,20 @@ extend-exclude = '''
 profile = "black"
 multi_line_output = 3
 line_length = 88
+known_first_party = ["TextTuner"]
 
 [tool.mypy]
 python_version = "3.8"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
+ignore_missing_imports = true
+exclude = [
+    '\.venv',
+    'build',
+    'dist',
+    '__pycache__',
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -90,4 +104,20 @@ addopts = [
     "--cov=src/text_tuner",
     "--cov-report=term-missing",
     "--cov-report=html",
+]
+
+[tool.coverage.run]
+source = ["src/text_tuner"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+]
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+select = ["E", "W", "F", "C", "N", "B", "D"]
+exclude = [".git", "__pycache__", ".venv", "build", "dist"]
+per-file-ignores = [
+    "__init__.py:F401",
 ]
