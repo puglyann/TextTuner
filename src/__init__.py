@@ -1,5 +1,5 @@
 __version__ = "1.0.0"
-__author__ = "Linguist Student"
+__author__ = "Anna Azimkova"
 __email__ = "adazimkova@edu.hse.ru"
 
 from .core.text_analyzer import TextAnalyzer

@@ -7,59 +7,15 @@ The main module of the application provides an interface for analyzing and adapt
 import sys
 import os
 import argparse
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
-
-try:
-    from src.core.text_analyzer import TextAnalyzer
-    from src.core.style_adapter import StyleAdapter
-    from src.core.statistics_calculator import StatisticsCalculator
-    from src.models.text_models import TextDocument, AnalysisResult
-    from src.models.style_models import StyleProfile
-    from src.utils.file_handler import FileHandler
-    from src.config.style_configs import STYLE_CONFIGS, get_style_config, get_available_styles
-
-    IMPORTS_SUCCESSFUL = True
-
-except ImportError as import_err:
-    print(f"Ошибка импорта: {import_err}")
-    print("Проверьте структуру проекта и наличие всех модулей.")
-
-    # Define dummy classes to avoid NameErrors
-    class TextAnalyzer:
-        def __init__(self):
-            raise RuntimeError("TextAnalyzer не был импортирован правильно")
-
-    class StyleAdapter:
-        def __init__(self):
-            raise RuntimeError("StyleAdapter не был импортирован правильно")
-
-    class StatisticsCalculator:
-        def __init__(self):
-            raise RuntimeError("StatisticsCalculator не был импортирован правильно")
-
-    class TextDocument:
-        def __init__(self, raw_text: str):
-            raise RuntimeError("TextDocument не был импортирован правильно")
-
-    class AnalysisResult:
-        pass
-
-    class StyleProfile:
-        pass
-
-    class FileHandler:
-        def __init__(self):
-            raise RuntimeError("FileHandler не был импортирован правильно")
-
-    def get_style_config(style_name: str) -> Dict[str, Any]:
-        raise RuntimeError("get_style_config не была импортирована правильно")
-
-    def get_available_styles() -> Dict[str, str]:
-        raise RuntimeError("get_available_styles не была импортирована правильно")
-
-    IMPORTS_SUCCESSFUL = False
+from .core.text_analyzer import TextAnalyzer
+from .core.style_adapter import StyleAdapter
+from .core.statistics_calculator import StatisticsCalculator
+from .models.text_models import TextDocument, AnalysisResult
+from .models.style_models import StyleProfile
+from .utils.file_handler import FileHandler
+from .config.style_configs import get_style_config, get_available_styles
 
 
 class TextTuner:
@@ -78,9 +34,6 @@ class TextTuner:
 
     def __init__(self):
         """Initialize TextTuner with all necessary components."""
-        if not IMPORTS_SUCCESSFUL:
-            raise RuntimeError("Не удалось инициализировать TextTuner из-за ошибок импорта")
-
         self.text_analyzer = TextAnalyzer()
         self.style_adapter = StyleAdapter()
         self.statistics_calculator = StatisticsCalculator()
@@ -99,7 +52,8 @@ class TextTuner:
         """
         style_config = get_style_config(target_style)
         if not style_config:
-            raise ValueError(f"Style '{target_style}' not found. Available styles: {list(get_available_styles().keys())}")
+            available_styles = list(get_available_styles().keys())
+            raise ValueError(f"Style '{target_style}' not found. Available styles: {available_styles}")
 
         text_doc = TextDocument(raw_text=text)
 
@@ -159,7 +113,7 @@ class TextTuner:
         """
         analysis_result = self.analyze_text(text, target_style)
 
-        adaptation_result = self.style_adapter.adapt_text(
+        adapted_text = self.style_adapter.adapt_text(
             text,
             analysis_result.style_metrics,
             get_style_config(target_style)
@@ -167,7 +121,7 @@ class TextTuner:
 
         return {
             'original_text': text,
-            'adapted_text': adaptation_result,
+            'adapted_text': adapted_text,
             'analysis': analysis_result,
             'style': target_style
         }
@@ -273,11 +227,6 @@ def main() -> None:
         for style, desc in get_available_styles().items():
             print(f"  • {style}: {desc}")
         return
-
-    if not IMPORTS_SUCCESSFUL:
-        print("Ошибка: Не удалось загрузить необходимые модули.")
-        print("Убедитесь, что все зависимости установлены и структура проекта правильная.")
-        sys.exit(1)
 
     tuner = TextTuner()
 
