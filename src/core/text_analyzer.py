@@ -27,6 +27,7 @@ class TextAnalyzer:
         self.preprocessor = TextPreprocessor()
         self.dictionary_loader = DictionaryLoader()
         self.formal_words = self.dictionary_loader.load_formal_dictionary()
+        self.informal_words = self.dictionary_loader.load_informal_dictionary()
 
     def analyze_text(self, text: str) -> StyleMetrics:
         """
@@ -64,7 +65,8 @@ class TextAnalyzer:
         """Calculates lexical diversity (Type-Token Ratio)."""
         if not words:
             return 0.0
-        return len(set(words)) / len(words)
+        unique_words = len(set(words))
+        return unique_words / len(words)
 
     def _calculate_formality_score(self, words: List[str]) -> float:
         """Calculates the formality score of a text."""
@@ -72,7 +74,14 @@ class TextAnalyzer:
             return 0.0
 
         formal_count = sum(1 for word in words if word in self.formal_words)
-        return formal_count / len(words)
+        informal_count = sum(1 for word in words if word in self.informal_words)
+
+        total_special = formal_count + informal_count
+
+        if total_special == 0:
+            return 0.5
+
+        return formal_count / total_special
 
     @staticmethod
     def _calculate_readability_index(text: str, sentences: List[str], words: List[str]) -> float:
@@ -127,3 +136,19 @@ class TextAnalyzer:
             return 0.0
         return sum(len(word) for word in words) / len(words)
 
+    def get_text_statistics(self, text: str) -> Dict[str, any]:
+        """Returns comprehensive text statistics."""
+        cleaned_text = self.preprocessor.clean_text(text)
+        words = self.preprocessor.tokenize_words(cleaned_text)
+        sentences = self.preprocessor.split_sentences(cleaned_text)
+
+        return {
+            'total_characters': len(cleaned_text),
+            'total_words': len(words),
+            'total_sentences': len(sentences),
+            'unique_words': len(set(words)),
+            'avg_word_length': self._calculate_word_length_avg(words),
+            'avg_sentence_length': len(words) / len(sentences) if sentences else 0,
+            'lexical_diversity': self._calculate_lexical_diversity(words),
+            'formality_score': self._calculate_formality_score(words)
+        }
