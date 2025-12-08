@@ -1,7 +1,7 @@
 import sys
 import os
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from src.main import TextTuner
 
@@ -29,8 +29,8 @@ def main():
     adaptation = tuner.adapt_text(text, "официально-деловой")
     print(f"Оригинальный текст:\n{adaptation['original_text']}")
     print(f"\nАдаптированный текст:\n{adaptation['adapted_text']}")
-    print(f"\nРекомендации:")
-    for i, rec in enumerate(adaptation['analysis'].recommendations, 1):
+    print("\nРекомендации:")
+    for i, rec in enumerate(adaptation["analysis"].recommendations, 1):
         print(f"  {i}. {rec}")
 
     print("\n" + "=" * 60)

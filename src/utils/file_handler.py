@@ -10,27 +10,27 @@ class FileHandler:
     """
 
     def __init__(self):
-        self.supported_extensions = {'.txt', '.md', '.json'}
+        self.supported_extensions = {".txt", ".md", ".json"}
 
     @staticmethod
-    def read_text_file(file_path: str, encoding: str = 'utf-8') -> str:
+    def read_text_file(file_path: str, encoding: str = "utf-8") -> str:
         """Reads a text file."""
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"Файл не найден: {file_path}")
 
         file_ext = Path(file_path).suffix.lower()
-        if file_ext not in {'.txt', '.md', '.json', '.csv'}:
+        if file_ext not in {".txt", ".md", ".json", ".csv"}:
             print(f"Предупреждение: Файл имеет неподдерживаемое расширение: {file_ext}")
 
-        with open(file_path, 'rb') as f:
+        with open(file_path, "rb") as f:
             raw_data = f.read()
             detected = chardet.detect(raw_data)
-            detected_encoding = detected['encoding'] or encoding
+            detected_encoding = detected["encoding"] or encoding
 
         try:
             return raw_data.decode(detected_encoding)
         except UnicodeDecodeError:
-            for enc in ['utf-8', 'cp1251', 'koi8-r', 'iso-8859-5']:
+            for enc in ["utf-8", "cp1251", "koi8-r", "iso-8859-5"]:
                 try:
                     return raw_data.decode(enc)
                 except UnicodeDecodeError:
@@ -46,11 +46,11 @@ class FileHandler:
     @staticmethod
     def detect_encoding(file_path: str) -> Optional[str]:
         """Defines the encoding of the file."""
-        encodings = ['utf-8', 'cp1251', 'koi8-r', 'iso-8859-5']
+        encodings = ["utf-8", "cp1251", "koi8-r", "iso-8859-5"]
 
         for encoding in encodings:
             try:
-                with open(file_path, 'r', encoding=encoding) as file:
+                with open(file_path, "r", encoding=encoding) as file:
                     file.read()
                 return encoding
             except UnicodeDecodeError:
@@ -80,12 +80,12 @@ class FileHandler:
         return sorted(files)
 
     @staticmethod
-    def write_file(file_path: str, content: str, encoding: str = 'utf-8') -> None:
+    def write_file(file_path: str, content: str, encoding: str = "utf-8") -> None:
         """Writes content to file."""
         path = Path(file_path)
         path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(file_path, 'w', encoding=encoding) as f:
+        with open(file_path, "w", encoding=encoding) as f:
             f.write(content)
 
     def get_file_info(self, file_path: str) -> dict:
@@ -96,10 +96,10 @@ class FileHandler:
             raise FileNotFoundError(f"Файл не найден: {file_path}")
 
         return {
-            'name': path.name,
-            'size_bytes': path.stat().st_size,
-            'size_mb': path.stat().st_size / (1024 * 1024),
-            'modified': path.stat().st_mtime,
-            'extension': path.suffix.lower(),
-            'encoding': self.detect_encoding(file_path)
+            "name": path.name,
+            "size_bytes": path.stat().st_size,
+            "size_mb": path.stat().st_size / (1024 * 1024),
+            "modified": path.stat().st_mtime,
+            "extension": path.suffix.lower(),
+            "encoding": self.detect_encoding(file_path),
         }

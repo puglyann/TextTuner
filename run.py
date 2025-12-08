@@ -8,11 +8,11 @@ print(f"Текущая директория: {os.getcwd()}")
 print(f"Директория скрипта: {os.path.dirname(os.path.abspath(__file__))}")
 
 required_files = [
-    'src/main.py',
-    'src/config/style_configs.py',
-    'src/core/text_analyzer.py',
-    'src/models/text_models.py',
-    'src/utils/file_handler.py'
+    "src/main.py",
+    "src/config/style_configs.py",
+    "src/core/text_analyzer.py",
+    "src/models/text_models.py",
+    "src/utils/file_handler.py",
 ]
 
 print("\nПроверка файлов:")
@@ -40,17 +40,17 @@ except ImportError as e:
     print("3. Неправильные импорты в коде")
 
     print("\nТекущая структура проекта:")
-    for root, dirs, files in os.walk('.'):
+    for root, dirs, files in os.walk("."):
         # Пропускаем скрытые директории
-        dirs[:] = [d for d in dirs if not d.startswith('.')]
+        dirs[:] = [d for d in dirs if not d.startswith(".")]
 
         level = root.count(os.sep) - 1
-        indent = ' ' * 2 * level
-        print(f'{indent}{os.path.basename(root)}/')
-        subindent = ' ' * 2 * (level + 1)
+        indent = " " * 2 * level
+        print(f"{indent}{os.path.basename(root)}/")
+        subindent = " " * 2 * (level + 1)
         for f in files:
-            if f.endswith('.py'):
-                print(f'{subindent}{f}')
+            if f.endswith(".py"):
+                print(f"{subindent}{f}")
 
     sys.exit(1)
 except Exception as e:

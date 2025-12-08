@@ -9,12 +9,12 @@ from .models.text_models import TextDocument, StyleMetrics, AnalysisResult
 from .models.style_models import StyleProfile, StyleRule
 
 __all__ = [
-    'TextAnalyzer',
-    'StyleAdapter',
-    'StatisticsCalculator',
-    'TextDocument',
-    'StyleMetrics',
-    'AnalysisResult',
-    'StyleProfile',
-    'StyleRule',
+    "TextAnalyzer",
+    "StyleAdapter",
+    "StatisticsCalculator",
+    "TextDocument",
+    "StyleMetrics",
+    "AnalysisResult",
+    "StyleProfile",
+    "StyleRule",
 ]

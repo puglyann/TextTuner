@@ -7,7 +7,7 @@ The main module of the application provides an interface for analyzing and adapt
 import sys
 import os
 import argparse
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
 from .core.text_analyzer import TextAnalyzer
 from .core.style_adapter import StyleAdapter
@@ -53,7 +53,9 @@ class TextTuner:
         style_config = get_style_config(target_style)
         if not style_config:
             available_styles = list(get_available_styles().keys())
-            raise ValueError(f"Style '{target_style}' not found. Available styles: {available_styles}")
+            raise ValueError(
+                f"Style '{target_style}' not found. Available styles: {available_styles}"
+            )
 
         text_doc = TextDocument(raw_text=text)
 
@@ -61,15 +63,14 @@ class TextTuner:
 
         style_profile = StyleProfile(
             name=target_style,
-            description=style_config['description'],
-            target_metrics=style_config['target_metrics']
+            description=style_config["description"],
+            target_metrics=style_config["target_metrics"],
         )
 
         similarity_score = style_profile.calculate_similarity(style_metrics)
 
         recommendations = self.style_adapter.generate_recommendations(
-            style_metrics,
-            style_profile
+            style_metrics, style_profile
         )
 
         result = AnalysisResult(
@@ -77,7 +78,7 @@ class TextTuner:
             style_metrics=style_metrics,
             target_style=target_style,
             similarity_score=similarity_score,
-            recommendations=recommendations
+            recommendations=recommendations,
         )
 
         return result
@@ -114,19 +115,19 @@ class TextTuner:
         analysis_result = self.analyze_text(text, target_style)
 
         adapted_text = self.style_adapter.adapt_text(
-            text,
-            analysis_result.style_metrics,
-            get_style_config(target_style)
+            text, analysis_result.style_metrics, get_style_config(target_style)
         )
 
         return {
-            'original_text': text,
-            'adapted_text': adapted_text,
-            'analysis': analysis_result,
-            'style': target_style
+            "original_text": text,
+            "adapted_text": adapted_text,
+            "analysis": analysis_result,
+            "style": target_style,
         }
 
-    def batch_analyze(self, directory_path: str, target_style: str) -> Dict[str, AnalysisResult]:
+    def batch_analyze(
+        self, directory_path: str, target_style: str
+    ) -> Dict[str, AnalysisResult]:
         """
         Analyze multiple files in directory.
 
@@ -158,60 +159,50 @@ class TextTuner:
 def create_parser() -> argparse.ArgumentParser:
     """Create command line argument parser."""
     parser = argparse.ArgumentParser(
-        description='TextTuner: Адаптация текста под целевой стиль',
+        description="TextTuner: Адаптация текста под целевой стиль",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Примеры использования:
   %(prog)s --text "Ваш текст здесь" --style научный
   %(prog)s --file input.txt --style художественный --output report.json
   %(prog)s --list-styles
-        """
+        """,
     )
 
     parser.add_argument(
-        '--text',
-        type=str,
-        help='Текст для анализа (если не указан --file)'
+        "--text", type=str, help="Текст для анализа (если не указан --file)"
     )
 
-    parser.add_argument(
-        '--file',
-        type=str,
-        help='Путь к файлу с текстом'
-    )
+    parser.add_argument("--file", type=str, help="Путь к файлу с текстом")
 
     parser.add_argument(
-        '--style',
+        "--style",
         type=str,
         required=True,
-        choices=['научный', 'художественный', 'официально-деловой', 'разговорный'],
-        help='Целевой стиль для анализа'
+        choices=["научный", "художественный", "официально-деловой", "разговорный"],
+        help="Целевой стиль для анализа",
     )
 
     parser.add_argument(
-        '--output',
+        "--output", type=str, help="Путь для сохранения отчета (JSON формат)"
+    )
+
+    parser.add_argument(
+        "--format",
         type=str,
-        help='Путь для сохранения отчета (JSON формат)'
+        choices=["text", "json"],
+        default="text",
+        help="Формат вывода отчета (по умолчанию: text)",
     )
 
     parser.add_argument(
-        '--format',
-        type=str,
-        choices=['text', 'json'],
-        default='text',
-        help='Формат вывода отчета (по умолчанию: text)'
+        "--list-styles", action="store_true", help="Показать доступные стили и выйти"
     )
 
     parser.add_argument(
-        '--list-styles',
-        action='store_true',
-        help='Показать доступные стили и выйти'
-    )
-
-    parser.add_argument(
-        '--adapt',
-        action='store_true',
-        help='Выполнить адаптацию текста (показать изменения)'
+        "--adapt",
+        action="store_true",
+        help="Выполнить адаптацию текста (показать изменения)",
     )
 
     return parser
@@ -246,23 +237,25 @@ def main() -> None:
             parser.error("Необходимо указать --text или --file")
 
         if args.adapt:
-            text_to_adapt = args.text if args.text else tuner.file_handler.read_text_file(args.file)
+            text_to_adapt = (
+                args.text if args.text else tuner.file_handler.read_text_file(args.file)
+            )
             adaptation = tuner.adapt_text(text_to_adapt, args.style)
 
-            print("\n" + "="*60)
+            print("\n" + "=" * 60)
             print("РЕЗУЛЬТАТ АДАПТАЦИИ ТЕКСТА")
-            print("="*60)
+            print("=" * 60)
             print(f"\nОригинальный текст:\n{adaptation['original_text'][:500]}...")
             print(f"\n\nАдаптированный текст:\n{adaptation['adapted_text'][:500]}...")
             print(f"\n\nЦелевой стиль: {args.style}")
 
-            print("\n" + result.generate_report('text'))
+            print("\n" + result.generate_report("text"))
 
         else:
             output = result.generate_report(args.format)
 
             if args.output:
-                with open(args.output, 'w', encoding='utf-8') as f:
+                with open(args.output, "w", encoding="utf-8") as f:
                     f.write(output)
                 print(f"Отчет сохранен в: {args.output}")
             else:
@@ -275,4 +268,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
