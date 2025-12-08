@@ -40,3 +40,20 @@ ENV/
 *.csv
 *.json
 *.pkl
+
+# Pre-commit
+.pre-commit-config.yaml
+.pre-commit-hooks.yaml
+
+# Кэш pre-commit
+.pre-commit-cache/
+
+# Ruff кэш
+.ruff_cache/
+__pycache__/.ruff_cache/
+
+# MyPy кэш
+.mypy_cache/
+
+# Flake8 кэш
+.flake8

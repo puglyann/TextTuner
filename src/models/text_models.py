@@ -21,11 +21,11 @@ class TextDocument:
     def __post_init__(self):
         if not self.metadata:
             self.metadata = {
-                'file_path': self.file_path,
-                'encoding': 'utf-8',
-                'language': 'russian',
-                'creation_date': datetime.now().isoformat(),
-                'processing_stages': []
+                "file_path": self.file_path,
+                "encoding": "utf-8",
+                "language": "russian",
+                "creation_date": datetime.now().isoformat(),
+                "processing_stages": [],
             }
 
     def get_word_count(self) -> int:
@@ -42,10 +42,9 @@ class TextDocument:
 
     def add_processing_stage(self, stage: str) -> None:
         """Adds a processing step to the metadata."""
-        self.metadata['processing_stages'].append({
-            'stage': stage,
-            'timestamp': datetime.now().isoformat()
-        })
+        self.metadata["processing_stages"].append(
+            {"stage": stage, "timestamp": datetime.now().isoformat()}
+        )
 
 
 @dataclass
@@ -64,12 +63,12 @@ class StyleMetrics:
     def to_dict(self) -> Dict[str, Any]:
         """Converts metrics to a dictionary for serialization."""
         return {
-            'lexical_diversity': self.lexical_diversity,
-            'formality_score': self.formality_score,
-            'readability_index': self.readability_index,
-            'pos_frequency': self.pos_frequency,
-            'sentence_length_avg': self.sentence_length_avg,
-            'word_length_avg': self.word_length_avg
+            "lexical_diversity": self.lexical_diversity,
+            "formality_score": self.formality_score,
+            "readability_index": self.readability_index,
+            "pos_frequency": self.pos_frequency,
+            "sentence_length_avg": self.sentence_length_avg,
+            "word_length_avg": self.word_length_avg,
         }
 
     def to_json(self, indent: int = 2) -> str:
@@ -115,7 +114,7 @@ class AnalysisResult:
             f"  • Формальность: {self.style_metrics.formality_score:.3f}",
             f"  • Удобочитаемость: {self.style_metrics.readability_index:.1f}",
             "",
-            "РЕКОМЕНДАЦИИ:"
+            "РЕКОМЕНДАЦИИ:",
         ]
 
         for i, recommendation in enumerate(self.recommendations, 1):
@@ -127,17 +126,17 @@ class AnalysisResult:
     def _generate_json_report(self) -> str:
         """Generates a JSON report."""
         report_data = {
-            'analysis_id': self.analysis_id,
-            'target_style': self.target_style,
-            'similarity_score': self.similarity_score,
-            'timestamp': self.analysis_timestamp,
-            'metrics': self.style_metrics.to_dict(),
-            'text_statistics': {
-                'word_count': self.text_document.get_word_count(),
-                'sentence_count': self.text_document.get_sentence_count(),
-                'character_count': self.text_document.get_character_count()
+            "analysis_id": self.analysis_id,
+            "target_style": self.target_style,
+            "similarity_score": self.similarity_score,
+            "timestamp": self.analysis_timestamp,
+            "metrics": self.style_metrics.to_dict(),
+            "text_statistics": {
+                "word_count": self.text_document.get_word_count(),
+                "sentence_count": self.text_document.get_sentence_count(),
+                "character_count": self.text_document.get_character_count(),
             },
-            'recommendations': self.recommendations
+            "recommendations": self.recommendations,
         }
         return json.dumps(report_data, indent=2, ensure_ascii=False)
 
@@ -145,6 +144,6 @@ class AnalysisResult:
         """Exports results to JSON."""
         json_report = self._generate_json_report()
         if file_path:
-            with open(file_path, 'w', encoding='utf-8') as f:
+            with open(file_path, "w", encoding="utf-8") as f:
                 f.write(json_report)
         return json_report

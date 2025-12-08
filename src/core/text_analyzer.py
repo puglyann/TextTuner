@@ -1,4 +1,3 @@
-import re
 from collections import Counter
 from typing import Dict, List
 
@@ -46,7 +45,9 @@ class TextAnalyzer:
 
         lexical_diversity = self._calculate_lexical_diversity(words)
         formality_score = self._calculate_formality_score(words)
-        readability_index = self._calculate_readability_index(cleaned_text, sentences, words)
+        readability_index = self._calculate_readability_index(
+            cleaned_text, sentences, words
+        )
         pos_frequency = self._calculate_pos_frequency(words)
         sentence_length_avg = self._calculate_sentence_length_avg(sentences)
         word_length_avg = self._calculate_word_length_avg(words)
@@ -57,7 +58,7 @@ class TextAnalyzer:
             readability_index=readability_index,
             pos_frequency=pos_frequency,
             sentence_length_avg=sentence_length_avg,
-            word_length_avg=word_length_avg
+            word_length_avg=word_length_avg,
         )
 
     @staticmethod
@@ -84,7 +85,9 @@ class TextAnalyzer:
         return formal_count / total_special
 
     @staticmethod
-    def _calculate_readability_index(text: str, sentences: List[str], words: List[str]) -> float:
+    def _calculate_readability_index(
+        text: str, sentences: List[str], words: List[str]
+    ) -> float:
         """Calculates the readability index."""
         if not sentences or not words:
             return 0.0
@@ -106,10 +109,10 @@ class TextAnalyzer:
         for word in words:
             try:
                 parsed = self.morph_analyzer.parse(word)[0]
-                pos = str(parsed.tag.POS) if parsed.tag.POS else 'UNKN'
+                pos = str(parsed.tag.POS) if parsed.tag.POS else "UNKN"
                 pos_counter[pos] += 1
             except Exception:
-                pos_counter['UNKN'] += 1
+                pos_counter["UNKN"] += 1
 
         return {pos: count / total_words for pos, count in pos_counter.items()}
 
@@ -143,12 +146,12 @@ class TextAnalyzer:
         sentences = self.preprocessor.split_sentences(cleaned_text)
 
         return {
-            'total_characters': len(cleaned_text),
-            'total_words': len(words),
-            'total_sentences': len(sentences),
-            'unique_words': len(set(words)),
-            'avg_word_length': self._calculate_word_length_avg(words),
-            'avg_sentence_length': len(words) / len(sentences) if sentences else 0,
-            'lexical_diversity': self._calculate_lexical_diversity(words),
-            'formality_score': self._calculate_formality_score(words)
+            "total_characters": len(cleaned_text),
+            "total_words": len(words),
+            "total_sentences": len(sentences),
+            "unique_words": len(set(words)),
+            "avg_word_length": self._calculate_word_length_avg(words),
+            "avg_sentence_length": len(words) / len(sentences) if sentences else 0,
+            "lexical_diversity": self._calculate_lexical_diversity(words),
+            "formality_score": self._calculate_formality_score(words),
         }
